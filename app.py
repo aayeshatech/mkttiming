@@ -43,6 +43,11 @@ st.markdown("""
     .symbol-timeline { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; border-radius: 10px; margin: 0.5rem 0; }
     .market-status-open { color: #00ff88; font-weight: bold; }
     .market-status-closed { color: #ff4757; font-weight: bold; }
+    .aspect-bullish { background-color: rgba(0, 255, 136, 0.1); padding: 1rem; border-left: 5px solid #00ff88; border-radius: 8px; margin: 0.5rem 0; }
+    .aspect-bearish { background-color: rgba(255, 71, 87, 0.1); padding: 1rem; border-left: 5px solid #ff4757; border-radius: 8px; margin: 0.5rem 0; }
+    .aspect-volatile { background-color: rgba(255, 165, 2, 0.1); padding: 1rem; border-left: 5px solid #ffa502; border-radius: 8px; margin: 0.5rem 0; }
+    .aspect-summary { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 1.5rem; border-radius: 12px; margin: 1rem 0; }
+    .week-summary { background-color: rgba(100, 149, 237, 0.1); padding: 1rem; border: 2px solid #6495ed; border-radius: 8px; margin: 0.5rem 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -951,85 +956,10 @@ def get_accurate_market_signals_for_date(target_date, symbol, time_slot):
         return "HOLD", market_factors
 
 def advanced_signal_generation(planet_data, transits, symbol, time_slot, date):
-    """Enhanced signal generation using accurate planetary timing data"""
-    # Use the new accurate signal generation for better results
-    if date == datetime(2025, 8, 7).date():
-        signal, factors = get_accurate_market_signals_for_date(date, symbol, time_slot)
-        return signal
-    
-    # Original logic for other dates
-    signal_strength = 0
-    hour = int(time_slot.split(':')[0])
-    minute = int(time_slot.split(':')[1])
-    current_minutes = hour * 60 + minute
-    
-    # Original planetary influences
-    mars_data = next((p for p in planet_data if p["planet"] == "Mars"), None)
-    if mars_data and mars_data["sign"] == "Taurus":
-        signal_strength += 3
-        if mars_data["nakshatra"] == "Rohini":
-            signal_strength += 1
-    
-    mercury_data = next((p for p in planet_data if p["planet"] == "Mercury"), None)
-    if mercury_data and mercury_data["motion"] == "R":
-        if symbol in ["BTC", "NASDAQ"]:
-            signal_strength -= 3
-        else:
-            signal_strength -= 2
-    
-    # Transit aspect influences
-    for transit in transits:
-        transit_hour = int(transit["time"].split(':')[0])
-        transit_minute = int(transit["time"].split(':')[1])
-        transit_minutes = transit_hour * 60 + transit_minute
-        
-        # Check if current time is within transit influence window
-        time_diff = abs(current_minutes - transit_minutes)
-        duration_minutes = transit["duration_hours"] * 60
-        
-        if time_diff <= duration_minutes // 2:
-            # Apply transit influence
-            influence = transit["strength"] * (1 - time_diff / (duration_minutes // 2))
-            
-            # Check if symbol/sector is affected
-            symbol_sectors = {
-                "NIFTY": ["Banking", "Finance"], "BANKNIFTY": ["Banking", "Finance"],
-                "BTC": ["Technology", "Cryptocurrency"], "GOLD": ["Traditional Assets"],
-                "CRUDE": ["Energy"], "NASDAQ": ["Technology"], "USD/INR": ["International Trade"]
-            }
-            
-            affected_sectors = symbol_sectors.get(symbol, [])
-            sector_match = any(sector in transit["sectors"] for sector in affected_sectors)
-            
-            if sector_match or len(affected_sectors) == 0:  # Apply to all if no specific sectors
-                if transit["market_impact"] == "bullish":
-                    signal_strength += influence
-                elif transit["market_impact"] == "bearish":
-                    signal_strength -= influence
-                else:  # neutral
-                    signal_strength += influence * 0.3
-    
-    # Add time-based and randomness
-    if 9 <= hour <= 10:
-        signal_strength += 0.5
-    elif 14 <= hour <= 15:
-        signal_strength -= 0.5
-    elif 17 <= hour <= 20:
-        signal_strength += 0.3
-    
-    signal_strength += random.uniform(-0.8, 0.8)
-    
-    # Convert to signal
-    if signal_strength >= 3.5:
-        return "STRONG BUY"
-    elif signal_strength >= 1.5:
-        return "BUY"
-    elif signal_strength <= -3.5:
-        return "STRONG SELL"
-    elif signal_strength <= -1.5:
-        return "SELL"
-    else:
-        return "HOLD"
+    """Enhanced signal generation using accurate planetary timing data for any date"""
+    # Use the new accurate signal generation for any date
+    signal, factors = get_accurate_market_signals_for_date(date, symbol, time_slot)
+    return signal
 
 def generate_time_slots(start_hour, start_min, end_hour, end_min, interval=30):
     """Generate time slots"""
@@ -1096,15 +1026,14 @@ def main():
     planetary_aspects = calculate_planetary_aspects_for_date(base_date, trading_date)
     
     # Main tabs
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(["📈 Market Signals", "🪐 Planetary Transits", "⏰ Daily Transit Aspects", "📊 Sector Analysis", "🎯 Daily Market Effects", "🔄 Turning Points", "⏰ Timeline", "🎯 Accurate Timing"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs(["📈 Market Signals", "🪐 Planetary Transits", "⏰ Daily Transit Aspects", "📊 Sector Analysis", "🎯 Daily Market Effects", "🔄 Turning Points", "⏰ Timeline", "🎯 Accurate Timing", "🌟 Aspects"])
     
     with tab1:
         st.header("📈 Enhanced Market Timing Signals")
-        st.info(f"🔮 Signals calculated with planetary positions + transit aspects for {trading_date.strftime('%B %d, %Y')}")
+        st.info(f"🔮 Signals calculated with accurate planetary timing data for {trading_date.strftime('%B %d, %Y')}")
         
-        # Show correction notice for August 7, 2025
-        if trading_date == datetime(2025, 8, 7).date():
-            st.success("✅ **Corrected Signals**: Using accurate planetary timing data for August 7, 2025 - Signals now match actual market fall")
+        # Show that signals are now auto-calculated for any date
+        st.success("✅ **Auto-Calculated Signals**: Using accurate planetary timing calculations for your selected date - Signals automatically adjust based on planetary movements")
         
         if market_type in ["Indian Markets", "Both Markets"]:
             st.subheader("🇮🇳 Indian Markets (9:15 AM - 3:30 PM IST)")
@@ -1168,23 +1097,30 @@ def main():
             
             st.dataframe(df_global.style.applymap(style_signals_global), height=300)
             
-        # Show market factors for August 7, 2025
-        if trading_date == datetime(2025, 8, 7).date():
-            st.subheader("🔍 Key Market Factors (August 7, 2025)")
-            
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.error("**🔴 Mercury Retrograde**")
-                st.write("11:51 AM - Severe bearish impact on tech and indices")
-            
-            with col2:
-                st.warning("**⚡ Moon Transitions**")
-                st.write("Multiple bearish combinations throughout the day")
-            
-            with col3:
-                st.info("**📊 Venus Volatility**") 
-                st.write("6:27 PM - Venus in Ardra causes evening uncertainty")
+        # Show calculation info for selected date
+        st.subheader(f"🔍 Signal Calculation Details - {trading_date.strftime('%B %d, %Y')}")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        days_from_base = abs((trading_date - datetime(2025, 8, 7).date()).days)
+        
+        with col1:
+            st.info(f"**📅 Date Analysis**")
+            st.write(f"Selected: {trading_date.strftime('%B %d, %Y')}")
+            st.write(f"Days from base: {days_from_base}")
+        
+        with col2:
+            st.warning("**⚡ Planetary Motion**")
+            st.write("Moon: ~50 min shift/day")
+            st.write("Mercury: ~20 min shift/day") 
+            st.write("Venus: ~15 min shift/day")
+        
+        with col3:
+            st.error("**📊 Key Factors**")
+            timing_data = get_accurate_planetary_timing_data(trading_date)
+            bearish_count = len([t for t in timing_data if "bearish" in t["market_effect"]])
+            st.write(f"Bearish influences: {bearish_count}")
+            st.write(f"Total timings: {len(timing_data)}")
     
     with tab2:
         st.header(f"🪐 Planetary Transits for {trading_date.strftime('%B %d, %Y')}")
@@ -1797,6 +1733,249 @@ def main():
         - SELL/STRONG SELL signals during market weakness periods
         - Accurate timing of bearish planetary influences
         """)
+
+    with tab9:
+        st.header("🌟 Planetary Aspects Analysis - August 2025")
+        st.info("📊 Complete planetary aspects timeline with symbol-specific impact analysis and bullish/bearish reports")
+        
+        # Symbol search section
+        st.subheader("🔍 Symbol Impact Analysis")
+        
+        col1, col2, col3 = st.columns([2, 1, 1])
+        
+        with col1:
+            available_symbols_aspects = ["NIFTY", "BANKNIFTY", "GOLD", "SILVER", "CRUDE", "BTC", "DOWJONES"]
+            selected_symbol_aspects = st.selectbox(
+                "Select Symbol for Aspect Analysis",
+                available_symbols_aspects,
+                help="Choose a symbol to analyze planetary aspect impacts for August 2025"
+            )
+        
+        with col2:
+            analysis_type = st.selectbox(
+                "Analysis Type",
+                ["Monthly Timeline", "Weekly Summary", "Key Aspects Only"],
+                help="Choose the depth of analysis"
+            )
+        
+        with col3:
+            if st.button("📊 Analyze Aspects", type="primary"):
+                st.session_state.show_aspect_analysis = True
+                st.session_state.selected_aspect_symbol = selected_symbol_aspects
+                st.session_state.aspect_analysis_type = analysis_type
+        
+        # Display analysis if button clicked
+        if getattr(st.session_state, 'show_aspect_analysis', False):
+            aspects_data = get_august_2025_aspects()
+            symbol_timeline = analyze_symbol_aspect_impact(st.session_state.selected_aspect_symbol, aspects_data)
+            month_summary = get_month_summary(symbol_timeline)
+            
+            # Monthly Summary
+            st.subheader(f"📈 {st.session_state.selected_aspect_symbol} - August 2025 Summary")
+            
+            col1, col2, col3, col4, col5 = st.columns(5)
+            
+            with col1:
+                st.metric("Total Impact", f"{month_summary['total_impact']}")
+            with col2:
+                st.metric("Avg Daily Impact", f"{month_summary['average_impact']}")
+            with col3:
+                st.metric("Bullish Days", month_summary['bullish_days'], f"{month_summary['bullish_days']/31*100:.0f}%")
+            with col4:
+                st.metric("Bearish Days", month_summary['bearish_days'], f"{month_summary['bearish_days']/31*100:.0f}%")
+            with col5:
+                st.metric("Neutral Days", month_summary['neutral_days'], f"{month_summary['neutral_days']/31*100:.0f}%")
+            
+            # Best and Worst Days
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                best_day = month_summary['strongest_bullish']
+                st.success(f"""
+                **🚀 STRONGEST BULLISH DAY**
+                
+                **Date:** {best_day['date']}
+                **Impact:** {best_day['daily_impact']}
+                **Bias:** {best_day['bias']}
+                **Key Aspects:** {', '.join(best_day['aspects'][:3])}
+                """)
+            
+            with col2:
+                worst_day = month_summary['strongest_bearish']
+                st.error(f"""
+                **🔴 STRONGEST BEARISH DAY**
+                
+                **Date:** {worst_day['date']}
+                **Impact:** {worst_day['daily_impact']}
+                **Bias:** {worst_day['bias']}
+                **Key Aspects:** {', '.join(worst_day['aspects'][:3])}
+                """)
+            
+            # Timeline Analysis
+            if st.session_state.aspect_analysis_type == "Monthly Timeline":
+                st.subheader(f"📅 Daily Timeline - {st.session_state.selected_aspect_symbol}")
+                
+                for day_data in symbol_timeline:
+                    # Color based on bias
+                    if "STRONG BULLISH" in day_data["bias"]:
+                        st.success(f"""
+                        **{day_data['date']}** {day_data['bias']} (Impact: {day_data['daily_impact']})
+                        
+                        **Aspects:** {', '.join(day_data['aspects'])}
+                        
+                        **Key Factors:** {day_data['factors'][0] if day_data['factors'] else 'Mixed influences'}
+                        """)
+                    elif "BULLISH" in day_data["bias"]:
+                        st.info(f"""
+                        **{day_data['date']}** {day_data['bias']} (Impact: {day_data['daily_impact']})
+                        
+                        **Aspects:** {', '.join(day_data['aspects'])}
+                        
+                        **Key Factors:** {day_data['factors'][0] if day_data['factors'] else 'Mixed influences'}
+                        """)
+                    elif "STRONG BEARISH" in day_data["bias"] or "BEARISH" in day_data["bias"]:
+                        st.error(f"""
+                        **{day_data['date']}** {day_data['bias']} (Impact: {day_data['daily_impact']})
+                        
+                        **Aspects:** {', '.join(day_data['aspects'])}
+                        
+                        **Key Factors:** {day_data['factors'][0] if day_data['factors'] else 'Mixed influences'}
+                        """)
+                    else:
+                        st.warning(f"""
+                        **{day_data['date']}** {day_data['bias']} (Impact: {day_data['daily_impact']})
+                        
+                        **Aspects:** {', '.join(day_data['aspects'])}
+                        
+                        **Key Factors:** {day_data['factors'][0] if day_data['factors'] else 'Mixed influences'}
+                        """)
+            
+            elif st.session_state.aspect_analysis_type == "Weekly Summary":
+                st.subheader(f"📊 Weekly Summary - {st.session_state.selected_aspect_symbol}")
+                
+                # Group by weeks
+                weeks = {
+                    "Week 1 (Aug 1-7)": symbol_timeline[0:7],
+                    "Week 2 (Aug 8-14)": symbol_timeline[7:14],
+                    "Week 3 (Aug 15-21)": symbol_timeline[14:21],
+                    "Week 4 (Aug 22-28)": symbol_timeline[21:28],
+                    "Week 5 (Aug 29-31)": symbol_timeline[28:31]
+                }
+                
+                for week_name, week_data in weeks.items():
+                    if week_data:
+                        week_impact = sum([day["daily_impact"] for day in week_data])
+                        week_avg = week_impact / len(week_data)
+                        
+                        if week_avg >= 1.0:
+                            st.success(f"**{week_name}** - Bullish Week (Avg: {week_avg:.1f})")
+                        elif week_avg <= -1.0:
+                            st.error(f"**{week_name}** - Bearish Week (Avg: {week_avg:.1f})")
+                        else:
+                            st.warning(f"**{week_name}** - Neutral Week (Avg: {week_avg:.1f})")
+                        
+                        # Show key aspects for the week
+                        all_aspects = []
+                        for day in week_data:
+                            all_aspects.extend(day["aspects"])
+                        
+                        unique_aspects = list(set(all_aspects))
+                        st.write(f"**Key Aspects:** {', '.join(unique_aspects[:5])}")
+                        st.write("")
+            
+            elif st.session_state.aspect_analysis_type == "Key Aspects Only":
+                st.subheader(f"🔑 Key High-Impact Aspects - {st.session_state.selected_aspect_symbol}")
+                
+                # Filter for high impact days only
+                high_impact_days = [day for day in symbol_timeline if abs(day["daily_impact"]) >= 2.0]
+                
+                if high_impact_days:
+                    for day_data in high_impact_days:
+                        if day_data["daily_impact"] >= 2.0:
+                            st.success(f"""
+                            **🚀 {day_data['date']}** - High Bullish Impact ({day_data['daily_impact']})
+                            
+                            **Major Aspects:** {', '.join(day_data['aspects'])}
+                            **All Factors:**
+                            {chr(10).join([f"• {factor}" for factor in day_data['factors']])}
+                            """)
+                        else:
+                            st.error(f"""
+                            **🔴 {day_data['date']}** - High Bearish Impact ({day_data['daily_impact']})
+                            
+                            **Major Aspects:** {', '.join(day_data['aspects'])}
+                            **All Factors:**
+                            {chr(10).join([f"• {factor}" for factor in day_data['factors']])}
+                            """)
+                else:
+                    st.info("No high-impact days (|impact| >= 2.0) found for this symbol in August 2025.")
+        
+        # Complete Aspects Overview
+        st.markdown("---")
+        st.subheader("📋 Complete August 2025 Planetary Aspects")
+        
+        aspects_data = get_august_2025_aspects()
+        aspect_impacts = get_aspect_impacts()
+        
+        # Create a summary table
+        aspect_summary = []
+        for date, aspects in aspects_data.items():
+            total_strength = 0
+            dominant_impact = "neutral"
+            impact_count = {"bullish": 0, "bearish": 0, "volatile": 0, "neutral": 0}
+            
+            for aspect in aspects:
+                if aspect in aspect_impacts:
+                    aspect_data = aspect_impacts[aspect]
+                    total_strength += aspect_data["strength"]
+                    
+                    if "bearish" in aspect_data["impact"]:
+                        impact_count["bearish"] += 1
+                    elif "bullish" in aspect_data["impact"]:
+                        impact_count["bullish"] += 1
+                    elif "volatile" in aspect_data["impact"]:
+                        impact_count["volatile"] += 1
+                    else:
+                        impact_count["neutral"] += 1
+            
+            # Determine dominant impact
+            max_impact = max(impact_count, key=impact_count.get)
+            if impact_count[max_impact] > 0:
+                dominant_impact = max_impact
+            
+            aspect_summary.append({
+                "Date": date,
+                "Total Aspects": len(aspects),
+                "Strength": total_strength,
+                "Dominant Impact": dominant_impact.title(),
+                "Key Aspects": ", ".join(aspects[:3]) + ("..." if len(aspects) > 3 else "")
+            })
+        
+        # Display summary table
+        summary_df = pd.DataFrame(aspect_summary)
+        st.dataframe(summary_df, height=400)
+        
+        # Aspect definitions
+        st.subheader("📖 Planetary Aspect Definitions")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 🔴 Bearish Aspects")
+            bearish_aspects = {k: v for k, v in aspect_impacts.items() if "bearish" in v["impact"]}
+            for aspect, data in bearish_aspects.items():
+                st.write(f"**{aspect}**: {data['description']} (Strength: {data['strength']})")
+        
+        with col2:
+            st.markdown("### 🟢 Bullish Aspects")
+            bullish_aspects = {k: v for k, v in aspect_impacts.items() if "bullish" in v["impact"]}
+            for aspect, data in bullish_aspects.items():
+                st.write(f"**{aspect}**: {data['description']} (Strength: {data['strength']})")
+        
+        st.markdown("### ⚡ Volatile Aspects")
+        volatile_aspects = {k: v for k, v in aspect_impacts.items() if "volatile" in v["impact"]}
+        for aspect, data in volatile_aspects.items():
+            st.write(f"**{aspect}**: {data['description']} (Strength: {data['strength']})")
 
     # Footer
     st.markdown("---")
