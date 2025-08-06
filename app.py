@@ -3,7 +3,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 import random
 import math
-
 # Page configuration
 st.set_page_config(
     page_title="🌟 Astrological Trading System",
@@ -247,81 +246,87 @@ def get_month_summary(symbol_timeline):
 
 # Real Planetary Timing Data for August 7, 2025
 @st.cache_data
-def get_accurate_planetary_timing_data():
-    return [
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "01:37:31", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Ju", "zodiac": "Sagittarius",
-            "nakshatra": "Purvashadha", "pada": 3, "position": "20°06'40\"", "declination": "-27.33",
-            "market_effect": "neutral", "strength": 2
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "04:57:23", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Sa", "zodiac": "Sagittarius",
-            "nakshatra": "Purvashadha", "pada": 3, "position": "21°53'20\"", "declination": "-27.05",
-            "market_effect": "bearish", "strength": 3
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "08:53:54", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Me", "zodiac": "Sagittarius",
-            "nakshatra": "Purvashadha", "pada": 4, "position": "24°00'00\"", "declination": "-26.69",
-            "market_effect": "very_bearish", "strength": 4
-        },
-        {
-            "planet": "Me", "date": "2025-08-07", "time": "11:51:34", "motion": "R",
-            "sign_lord": "Mo", "star_lord": "Sa", "sub_lord": "Su", "zodiac": "Cancer",
-            "nakshatra": "Pushya", "pada": 3, "position": "10°59'59\"", "declination": "14.98",
-            "market_effect": "very_bearish", "strength": 5  # Mercury Retrograde - Very bearish for tech/markets
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "12:24:45", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Ke", "zodiac": "Sagittarius",
-            "nakshatra": "Purvashadha", "pada": 4, "position": "25°53'20\"", "declination": "-26.33",
-            "market_effect": "bearish", "strength": 3
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "13:51:23", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Su", "zodiac": "Sagittarius",
-            "nakshatra": "Uttarashadha", "pada": 1, "position": "26°40'00\"", "declination": "-26.17",
-            "market_effect": "bearish", "strength": 3
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "15:05:32", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Mo", "zodiac": "Sagittarius",
-            "nakshatra": "Uttarashadha", "pada": 1, "position": "27°20'00\"", "declination": "-26.03",
-            "market_effect": "bearish", "strength": 2
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "17:08:56", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Ma", "zodiac": "Sagittarius",
-            "nakshatra": "Uttarashadha", "pada": 1, "position": "28°26'40\"", "declination": "-25.80",
-            "market_effect": "bearish", "strength": 3
-        },
-        {
-            "planet": "Ve", "date": "2025-08-07", "time": "18:27:16", "motion": "D",
-            "sign_lord": "Me", "star_lord": "Ra", "sub_lord": "Ke", "zodiac": "Gemini",
-            "nakshatra": "Ardra", "pada": 3, "position": "14°26'40\"", "declination": "21.98",
-            "market_effect": "volatile", "strength": 3  # Venus in Rahu-Ketu axis - volatile
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "18:35:10", "motion": "D",
-            "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Ra", "zodiac": "Sagittarius",
-            "nakshatra": "Uttarashadha", "pada": 1, "position": "29°13'20\"", "declination": "-25.62",
-            "market_effect": "very_bearish", "strength": 4  # Moon with Rahu sub-lord
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "20:01:17", "motion": "D",
-            "sign_lord": "Sa", "star_lord": "Su", "sub_lord": "Ra", "zodiac": "Capricorn",
-            "nakshatra": "Uttarashadha", "pada": 2, "position": "00°00'00\"", "declination": "-25.45",
-            "market_effect": "bearish", "strength": 3  # Moon enters Capricorn - Saturn's sign
-        },
-        {
-            "planet": "Mo", "date": "2025-08-07", "time": "22:16:23", "motion": "D",
-            "sign_lord": "Sa", "star_lord": "Su", "sub_lord": "Ju", "zodiac": "Capricorn",
-            "nakshatra": "Uttarashadha", "pada": 2, "position": "01°13'20\"", "declination": "-25.16",
-            "market_effect": "bearish", "strength": 2
-        }
-    ]
+def get_accurate_planetary_timing_data(trading_date=None):
+    # If no date is provided or it's August 7, 2025, return the specific data
+    if trading_date is None or trading_date == datetime(2025, 8, 7).date():
+        return [
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "01:37:31", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Ju", "zodiac": "Sagittarius",
+                "nakshatra": "Purvashadha", "pada": 3, "position": "20°06'40\"", "declination": "-27.33",
+                "market_effect": "neutral", "strength": 2
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "04:57:23", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Sa", "zodiac": "Sagittarius",
+                "nakshatra": "Purvashadha", "pada": 3, "position": "21°53'20\"", "declination": "-27.05",
+                "market_effect": "bearish", "strength": 3
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "08:53:54", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Me", "zodiac": "Sagittarius",
+                "nakshatra": "Purvashadha", "pada": 4, "position": "24°00'00\"", "declination": "-26.69",
+                "market_effect": "very_bearish", "strength": 4
+            },
+            {
+                "planet": "Me", "date": "2025-08-07", "time": "11:51:34", "motion": "R",
+                "sign_lord": "Mo", "star_lord": "Sa", "sub_lord": "Su", "zodiac": "Cancer",
+                "nakshatra": "Pushya", "pada": 3, "position": "10°59'59\"", "declination": "14.98",
+                "market_effect": "very_bearish", "strength": 5  # Mercury Retrograde - Very bearish for tech/markets
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "12:24:45", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Ve", "sub_lord": "Ke", "zodiac": "Sagittarius",
+                "nakshatra": "Purvashadha", "pada": 4, "position": "25°53'20\"", "declination": "-26.33",
+                "market_effect": "bearish", "strength": 3
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "13:51:23", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Su", "zodiac": "Sagittarius",
+                "nakshatra": "Uttarashadha", "pada": 1, "position": "26°40'00\"", "declination": "-26.17",
+                "market_effect": "bearish", "strength": 3
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "15:05:32", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Mo", "zodiac": "Sagittarius",
+                "nakshatra": "Uttarashadha", "pada": 1, "position": "27°20'00\"", "declination": "-26.03",
+                "market_effect": "bearish", "strength": 2
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "17:08:56", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Ma", "zodiac": "Sagittarius",
+                "nakshatra": "Uttarashadha", "pada": 1, "position": "28°26'40\"", "declination": "-25.80",
+                "market_effect": "bearish", "strength": 3
+            },
+            {
+                "planet": "Ve", "date": "2025-08-07", "time": "18:27:16", "motion": "D",
+                "sign_lord": "Me", "star_lord": "Ra", "sub_lord": "Ke", "zodiac": "Gemini",
+                "nakshatra": "Ardra", "pada": 3, "position": "14°26'40\"", "declination": "21.98",
+                "market_effect": "volatile", "strength": 3  # Venus in Rahu-Ketu axis - volatile
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "18:35:10", "motion": "D",
+                "sign_lord": "Ju", "star_lord": "Su", "sub_lord": "Ra", "zodiac": "Sagittarius",
+                "nakshatra": "Uttarashadha", "pada": 1, "position": "29°13'20\"", "declination": "-25.62",
+                "market_effect": "very_bearish", "strength": 4  # Moon with Rahu sub-lord
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "20:01:17", "motion": "D",
+                "sign_lord": "Sa", "star_lord": "Su", "sub_lord": "Ra", "zodiac": "Capricorn",
+                "nakshatra": "Uttarashadha", "pada": 2, "position": "00°00'00\"", "declination": "-25.45",
+                "market_effect": "bearish", "strength": 3  # Moon enters Capricorn - Saturn's sign
+            },
+            {
+                "planet": "Mo", "date": "2025-08-07", "time": "22:16:23", "motion": "D",
+                "sign_lord": "Sa", "star_lord": "Su", "sub_lord": "Ju", "zodiac": "Capricorn",
+                "nakshatra": "Uttarashadha", "pada": 2, "position": "01°13'20\"", "declination": "-25.16",
+                "market_effect": "bearish", "strength": 2
+            }
+        ]
+    else:
+        # For other dates, return an empty list or generate approximate data
+        # For this example, we'll return an empty list
+        return []
 
 # Base Planetary Data for August 6, 2025
 @st.cache_data
@@ -862,7 +867,7 @@ def get_daily_market_effects(planet_data, transits, target_date):
 def get_accurate_market_signals_for_date(target_date, symbol, time_slot):
     """Generate more accurate signals using real planetary timing data"""
     base_date = datetime(2025, 8, 7).date()
-    timing_data = get_accurate_planetary_timing_data()
+    timing_data = get_accurate_planetary_timing_data(target_date)
     
     hour = int(time_slot.split(':')[0])
     minute = int(time_slot.split(':')[1])
@@ -1584,7 +1589,6 @@ def main():
         - Transit timings adjusted for {abs((trading_date - base_date).days)} days difference
         - Market timing: Indian (9:15 AM-3:30 PM) | Global/Commodity (5:00 AM-11:55 PM)
         """)
-
     with tab8:
         st.header("🎯 Accurate Planetary Timing Analysis")
         st.info(f"📊 Real planetary timing data with corrected market signals for {trading_date.strftime('%B %d, %Y')}")
@@ -1593,7 +1597,7 @@ def main():
         if trading_date == datetime(2025, 8, 7).date():
             st.subheader("🔍 Real Planetary Timing Data (August 7, 2025)")
             
-            timing_data = get_accurate_planetary_timing_data()
+            timing_data = get_accurate_planetary_timing_data(trading_date)
             
             # Display timing data in a more readable format
             for timing in timing_data:
@@ -1733,7 +1737,6 @@ def main():
         - SELL/STRONG SELL signals during market weakness periods
         - Accurate timing of bearish planetary influences
         """)
-
     with tab9:
         st.header("🌟 Planetary Aspects Analysis - August 2025")
         st.info("📊 Complete planetary aspects timeline with symbol-specific impact analysis and bullish/bearish reports")
@@ -1976,7 +1979,6 @@ def main():
         volatile_aspects = {k: v for k, v in aspect_impacts.items() if "volatile" in v["impact"]}
         for aspect, data in volatile_aspects.items():
             st.write(f"**{aspect}**: {data['description']} (Strength: {data['strength']})")
-
     # Footer
     st.markdown("---")
     st.caption("⚠️ **Enhanced Disclaimer**: This system combines Vedic planetary positions with daily transit aspects and accurate planetary timing calculations. For August 7, 2025, signals have been corrected using real planetary timing data to match actual market movements. Transit timing and aspect calculations are approximated for other dates. Always consult qualified financial advisors and use proper risk management.")
