@@ -526,8 +526,7 @@ def display_market_timing(market_type, date_str):
                     cell_data['label'], 
                     key=f"{symbol}_{time_slot}_{market_type}",
                     help=f"Click for detailed analysis of {symbol} at {time_slot}",
-                    type=button_type,
-                    use_container_width=True
+                    type=button_type
                 ):
                     show_signal_details(symbol, time_slot, cell_data['signal'], date_str)
         
@@ -714,11 +713,7 @@ def display_planetary_data():
     display_df = planets_df[['planet', 'zodiac', 'nakshatra', 'pada', 'position', 'motion']].copy()
     display_df['motion'] = display_df['motion'].map({'D': '🟢 Direct', 'R': '🔴 Retrograde'})
     
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        hide_index=True
-    )
+    st.dataframe(display_df)
     
     # Summary cards
     col1, col2, col3, col4 = st.columns(4)
