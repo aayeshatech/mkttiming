@@ -1,12 +1,89 @@
-# app.py - Main Flask Application
-from flask import Flask, render_template, jsonify, request
+import streamlit as st
+import pandas as pd
 from datetime import datetime, timedelta
 import json
 import random
 import math
 
-app = Flask(__name__)
-app.config['JSON_SORT_KEYS'] = False
+# Page configuration
+st.set_page_config(
+    page_title="🌟 Astrological Trading System",
+    page_icon="🌟",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Custom CSS
+st.markdown("""
+<style>
+    .main-header {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        color: white;
+        margin-bottom: 2rem;
+    }
+    
+    .signal-cell {
+        text-align: center;
+        padding: 0.5rem;
+        border-radius: 5px;
+        font-weight: bold;
+        margin: 2px;
+    }
+    
+    .strong-bullish {
+        background-color: #32ff7e;
+        color: #1a1a2e;
+    }
+    
+    .bullish {
+        background-color: #00ff88;
+        color: #1a1a2e;
+    }
+    
+    .neutral {
+        background-color: #ffa502;
+        color: #1a1a2e;
+    }
+    
+    .bearish {
+        background-color: #ff4757;
+        color: white;
+    }
+    
+    .strong-bearish {
+        background-color: #ff3838;
+        color: white;
+    }
+    
+    .metric-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        text-align: center;
+    }
+    
+    .planet-row {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem;
+        border-radius: 5px;
+        margin: 0.2rem 0;
+    }
+    
+    .motion-direct {
+        color: #32ff7e;
+        font-weight: bold;
+    }
+    
+    .motion-retrograde {
+        color: #ff4757;
+        font-weight: bold;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # Planetary data structure
 class PlanetaryData:
@@ -134,8 +211,6 @@ class PlanetaryData:
         self.indian_symbols = ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY', 'SENSEX']
         self.global_symbols = ['GOLD', 'SILVER', 'CRUDE', 'BTC', 'DOW JONES', 'S&P 500', 'NASDAQ', 'USD/INR']
 
-planetary_data = PlanetaryData()
-
 class AstrologicalAnalyzer:
     @staticmethod
     def generate_signal(symbol, time_str, date_str):
@@ -146,7 +221,7 @@ class AstrologicalAnalyzer:
         nearest_transit = None
         min_diff = float('inf')
         
-        for planet in planetary_data.planets:
+        for planet in st.session_state.planetary_data.planets:
             time_diff = abs((datetime.fromisoformat(planet['datetime']) - 
                            datetime.fromisoformat(current_time)).total_seconds())
             if time_diff < min_diff and time_diff < 3600:  # Within 1 hour
@@ -202,8 +277,6 @@ class AstrologicalAnalyzer:
         }
         return symbols.get(signal, '→')
 
-analyzer = AstrologicalAnalyzer()
-
 def generate_time_slots(start_hour, start_min, end_hour, end_min, interval=30):
     """Generate time slots for trading hours"""
     slots = []
@@ -218,147 +291,6 @@ def generate_time_slots(start_hour, start_min, end_hour, end_min, interval=30):
     
     return slots
 
-@app.route('/')
-def index():
-    """Main dashboard"""
-    return render_template('index.html')
-
-@app.route('/api/test')
-def api_test():
-    """Test endpoint to verify API is working"""
-    return jsonify({
-        'status': 'success',
-        'message': 'API is working correctly',
-        'timestamp': datetime.now().isoformat(),
-        'planets_count': len(planetary_data.planets),
-        'indian_symbols': len(planetary_data.indian_symbols),
-        'global_symbols': len(planetary_data.global_symbols)
-    })
-
-@app.route('/api/planetary-data')
-def get_planetary_data():
-    """Get current planetary data"""
-    try:
-        return jsonify({
-            'planets': planetary_data.planets,
-            'status': 'success'
-        })
-    except Exception as e:
-        app.logger.error(f"Error in get_planetary_data: {str(e)}")
-        return jsonify({
-            'error': f'Failed to get planetary data: {str(e)}',
-            'status': 'error'
-        }), 500
-
-@app.route('/api/market-timing/<market_type>')
-def get_market_timing(market_type):
-    """Get market timing signals"""
-    try:
-        date = request.args.get('date', '2025-08-06')
-        
-        if market_type == 'indian':
-            symbols = planetary_data.indian_symbols
-            time_slots = generate_time_slots(9, 15, 15, 30)
-        elif market_type == 'global':
-            symbols = planetary_data.global_symbols
-            time_slots = generate_time_slots(5, 0, 23, 55)
-        else:
-            return jsonify({'error': 'Invalid market type'}), 400
-        
-        timing_data = {}
-        for symbol in symbols:
-            timing_data[symbol] = {}
-            for time_slot in time_slots:
-                signal = analyzer.generate_signal(symbol, time_slot, date)
-                timing_data[symbol][time_slot] = {
-                    'signal': signal,
-                    'symbol': analyzer.get_signal_symbol(signal)
-                }
-        
-        response_data = {
-            'symbols': symbols,
-            'timeSlots': time_slots,
-            'timingData': timing_data,
-            'status': 'success'
-        }
-        
-        return jsonify(response_data)
-    
-    except Exception as e:
-        app.logger.error(f"Error in get_market_timing: {str(e)}")
-        return jsonify({
-            'error': f'Failed to generate market timing data: {str(e)}',
-            'status': 'error'
-        }), 500
-
-@app.route('/api/add-planetary-data', methods=['POST'])
-def add_planetary_data():
-    """Add new planetary transit data"""
-    try:
-        data = request.json
-        planetary_data.planets.append(data)
-        return jsonify({'status': 'success', 'message': 'Planetary data added successfully'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'error': str(e)}), 500
-
-@app.route('/api/update-symbols', methods=['POST'])
-def update_symbols():
-    """Update trading symbols"""
-    try:
-        data = request.json
-        market_type = data.get('market_type')
-        action = data.get('action')
-        symbol = data.get('symbol')
-        
-        if market_type == 'indian':
-            symbol_list = planetary_data.indian_symbols
-        else:
-            symbol_list = planetary_data.global_symbols
-        
-        if action == 'add' and symbol not in symbol_list:
-            symbol_list.append(symbol)
-            return jsonify({'status': 'success', 'message': f'{symbol} added successfully'})
-        elif action == 'remove' and symbol in symbol_list:
-            symbol_list.remove(symbol)
-            return jsonify({'status': 'success', 'message': f'{symbol} removed successfully'})
-        
-        return jsonify({'status': 'error', 'message': 'Operation failed'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'error': str(e)}), 500
-
-@app.route('/api/signal-details')
-def get_signal_details():
-    """Get detailed signal analysis"""
-    try:
-        symbol = request.args.get('symbol')
-        time_slot = request.args.get('time')
-        date = request.args.get('date', '2025-08-06')
-        
-        signal = analyzer.generate_signal(symbol, time_slot, date)
-        
-        # Find relevant planetary transit
-        current_time = f"{date}T{time_slot}:00"
-        relevant_transit = None
-        
-        for planet in planetary_data.planets:
-            time_diff = abs((datetime.fromisoformat(planet['datetime']) - 
-                           datetime.fromisoformat(current_time)).total_seconds())
-            if time_diff < 3600:  # Within 1 hour
-                relevant_transit = planet
-                break
-        
-        details = {
-            'signal': signal,
-            'symbol': analyzer.get_signal_symbol(signal),
-            'analysis': get_signal_analysis(signal),
-            'planetary_influence': relevant_transit,
-            'status': 'success'
-        }
-        
-        return jsonify(details)
-    except Exception as e:
-        return jsonify({'status': 'error', 'error': str(e)}), 500
-
 def get_signal_analysis(signal):
     """Get detailed analysis for signal"""
     analyses = {
@@ -370,58 +302,219 @@ def get_signal_analysis(signal):
     }
     return analyses.get(signal, 'No analysis available')
 
-@app.route('/api/statistics')
-def get_statistics():
-    """Get market statistics"""
-    try:
-        date = request.args.get('date', '2025-08-06')
-        
-        # Calculate statistics for both markets
-        indian_stats = calculate_market_stats('indian', date)
-        global_stats = calculate_market_stats('global', date)
-        
-        # Overall statistics
-        total_bullish = indian_stats['bullish'] + global_stats['bullish']
-        total_bearish = indian_stats['bearish'] + global_stats['bearish']
-        total_neutral = indian_stats['neutral'] + global_stats['neutral']
-        
-        # Calculate accuracy based on planetary alignment
-        retrograde_count = sum(1 for p in planetary_data.planets if p['motion'] == 'R')
-        base_accuracy = 75
-        accuracy_adjustment = (total_bullish - total_bearish) * 2 - retrograde_count * 3
-        final_accuracy = max(60, min(95, base_accuracy + accuracy_adjustment))
-        
-        return jsonify({
-            'bullish': total_bullish,
-            'bearish': total_bearish,
-            'neutral': total_neutral,
-            'accuracy': f"{final_accuracy}%",
-            'retrograde_planets': retrograde_count,
-            'active_transits': len(planetary_data.planets),
-            'status': 'success'
-        })
-    
-    except Exception as e:
-        app.logger.error(f"Error in get_statistics: {str(e)}")
-        return jsonify({
-            'error': f'Failed to calculate statistics: {str(e)}',
-            'status': 'error'
-        }), 500
+# Initialize session state
+if 'planetary_data' not in st.session_state:
+    st.session_state.planetary_data = PlanetaryData()
 
-def calculate_market_stats(market_type, date):
-    """Calculate statistics for a specific market"""
-    if market_type == 'indian':
-        symbols = planetary_data.indian_symbols
+if 'analyzer' not in st.session_state:
+    st.session_state.analyzer = AstrologicalAnalyzer()
+
+# Main app
+def main():
+    # Header
+    st.markdown("""
+    <div class="main-header">
+        <h1>🌟 Astrological Trading System</h1>
+        <p>Streamlit-Powered Market Timing with Planetary Analysis</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Sidebar controls
+    st.sidebar.header("📊 Control Panel")
+    
+    trading_date = st.sidebar.date_input(
+        "📅 Trading Date",
+        value=datetime(2025, 8, 6),
+        min_value=datetime(2020, 1, 1),
+        max_value=datetime(2030, 12, 31)
+    )
+    
+    market_selection = st.sidebar.selectbox(
+        "🌍 Market Selection",
+        ["Both Markets", "Indian Markets", "Global Markets"]
+    )
+    
+    auto_refresh = st.sidebar.checkbox("🔄 Auto Refresh (every 30s)")
+    
+    if auto_refresh:
+        st.rerun()
+    
+    # Main tabs
+    tab1, tab2, tab3, tab4 = st.tabs(["📈 Market Timing", "🪐 Planetary Transits", "📊 Statistics", "⚙️ Settings"])
+    
+    with tab1:
+        st.header("📈 Market Timing Analysis")
+        
+        date_str = trading_date.strftime("%Y-%m-%d")
+        
+        if market_selection in ["Indian Markets", "Both Markets"]:
+            st.subheader("🇮🇳 Indian Markets (9:15 AM - 3:30 PM IST)")
+            display_market_timing("indian", date_str)
+        
+        if market_selection in ["Global Markets", "Both Markets"]:
+            st.subheader("🌍 Global Markets & Commodities (5:00 AM - 11:55 PM IST)")
+            display_market_timing("global", date_str)
+    
+    with tab2:
+        st.header("🪐 Planetary Transit Details")
+        display_planetary_data()
+    
+    with tab3:
+        st.header("📊 Market Statistics")
+        display_statistics(date_str)
+    
+    with tab4:
+        st.header("⚙️ System Settings")
+        display_settings()
+
+def display_market_timing(market_type, date_str):
+    """Display market timing grid"""
+    if market_type == "indian":
+        symbols = st.session_state.planetary_data.indian_symbols
         time_slots = generate_time_slots(9, 15, 15, 30)
     else:
-        symbols = planetary_data.global_symbols
+        symbols = st.session_state.planetary_data.global_symbols
+        time_slots = generate_time_slots(5, 0, 23, 55)
+    
+    # Create timing data
+    timing_data = {}
+    for symbol in symbols:
+        timing_data[symbol] = {}
+        for time_slot in time_slots:
+            signal = st.session_state.analyzer.generate_signal(symbol, time_slot, date_str)
+            timing_data[symbol][time_slot] = {
+                'signal': signal,
+                'symbol': st.session_state.analyzer.get_signal_symbol(signal)
+            }
+    
+    # Display as a grid
+    cols = st.columns([1] + [1] * min(len(time_slots), 12))  # Limit columns for readability
+    
+    # Header row
+    cols[0].write("**Symbol**")
+    for i, time_slot in enumerate(time_slots[:12]):  # Show first 12 time slots
+        cols[i+1].write(f"**{time_slot}**")
+    
+    # Data rows
+    for symbol in symbols:
+        cols = st.columns([1] + [1] * min(len(time_slots), 12))
+        cols[0].write(f"**{symbol}**")
+        
+        for i, time_slot in enumerate(time_slots[:12]):
+            cell_data = timing_data[symbol][time_slot]
+            signal_class = cell_data['signal'].replace('-', '_')
+            
+            with cols[i+1]:
+                if st.button(
+                    cell_data['symbol'], 
+                    key=f"{symbol}_{time_slot}",
+                    help=f"{symbol} at {time_slot}: {cell_data['signal'].replace('-', ' ').title()}"
+                ):
+                    show_signal_details(symbol, time_slot, cell_data['signal'], date_str)
+
+def show_signal_details(symbol, time_slot, signal, date_str):
+    """Show detailed signal analysis in modal"""
+    st.sidebar.markdown("---")
+    st.sidebar.subheader(f"📊 Signal Details")
+    st.sidebar.write(f"**Symbol:** {symbol}")
+    st.sidebar.write(f"**Time:** {time_slot}")
+    st.sidebar.write(f"**Signal:** {signal.replace('-', ' ').title()}")
+    st.sidebar.write(f"**Analysis:** {get_signal_analysis(signal)}")
+    
+    # Find relevant planetary transit
+    current_time = f"{date_str}T{time_slot}:00"
+    for planet in st.session_state.planetary_data.planets:
+        time_diff = abs((datetime.fromisoformat(planet['datetime']) - 
+                        datetime.fromisoformat(current_time)).total_seconds())
+        if time_diff < 3600:  # Within 1 hour
+            st.sidebar.write("**Planetary Influence:**")
+            st.sidebar.write(f"🪐 {planet['planet']} in {planet['zodiac']}")
+            st.sidebar.write(f"⭐ Nakshatra: {planet['nakshatra']} (Pada {planet['pada']})")
+            st.sidebar.write(f"🔄 Motion: {'Direct' if planet['motion'] == 'D' else 'Retrograde'}")
+            break
+
+def display_planetary_data():
+    """Display planetary transit table"""
+    planets_df = pd.DataFrame(st.session_state.planetary_data.planets)
+    
+    # Format the dataframe
+    planets_df['datetime'] = pd.to_datetime(planets_df['datetime'])
+    planets_df['date'] = planets_df['datetime'].dt.date
+    planets_df['time'] = planets_df['datetime'].dt.time
+    
+    # Display table
+    st.dataframe(
+        planets_df[['planet', 'date', 'time', 'motion', 'zodiac', 'nakshatra', 'pada', 'position', 'declination']],
+        use_container_width=True
+    )
+    
+    # Summary cards
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Active Transits", len(planets_df))
+    
+    with col2:
+        retrograde_count = len(planets_df[planets_df['motion'] == 'R'])
+        st.metric("Retrograde Planets", retrograde_count)
+    
+    with col3:
+        direct_count = len(planets_df[planets_df['motion'] == 'D'])
+        st.metric("Direct Planets", direct_count)
+    
+    with col4:
+        accuracy = 75 + (direct_count - retrograde_count) * 5
+        st.metric("Predicted Accuracy", f"{accuracy}%")
+
+def display_statistics(date_str):
+    """Display market statistics"""
+    # Calculate statistics
+    indian_stats = calculate_market_stats('indian', date_str)
+    global_stats = calculate_market_stats('global', date_str)
+    
+    total_bullish = indian_stats['bullish'] + global_stats['bullish']
+    total_bearish = indian_stats['bearish'] + global_stats['bearish']
+    total_neutral = indian_stats['neutral'] + global_stats['neutral']
+    
+    # Display metrics
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Bullish Signals", total_bullish, delta=total_bullish - total_bearish)
+    
+    with col2:
+        st.metric("Bearish Signals", total_bearish)
+    
+    with col3:
+        st.metric("Neutral Signals", total_neutral)
+    
+    with col4:
+        retrograde_count = sum(1 for p in st.session_state.planetary_data.planets if p['motion'] == 'R')
+        accuracy = max(60, min(95, 75 + (total_bullish - total_bearish) * 2 - retrograde_count * 3))
+        st.metric("System Accuracy", f"{accuracy}%")
+    
+    # Create charts
+    signal_data = pd.DataFrame({
+        'Signal Type': ['Bullish', 'Bearish', 'Neutral'],
+        'Count': [total_bullish, total_bearish, total_neutral]
+    })
+    
+    st.bar_chart(signal_data.set_index('Signal Type'))
+
+def calculate_market_stats(market_type, date_str):
+    """Calculate statistics for a market"""
+    if market_type == 'indian':
+        symbols = st.session_state.planetary_data.indian_symbols
+        time_slots = generate_time_slots(9, 15, 15, 30)
+    else:
+        symbols = st.session_state.planetary_data.global_symbols
         time_slots = generate_time_slots(5, 0, 23, 55)
     
     bullish = bearish = neutral = 0
     
     for symbol in symbols:
         for time_slot in time_slots:
-            signal = analyzer.generate_signal(symbol, time_slot, date)
+            signal = st.session_state.analyzer.generate_signal(symbol, time_slot, date_str)
             if signal in ['strong-bullish', 'bullish']:
                 bullish += 1
             elif signal in ['strong-bearish', 'bearish']:
@@ -431,10 +524,67 @@ def calculate_market_stats(market_type, date):
     
     return {'bullish': bullish, 'bearish': bearish, 'neutral': neutral}
 
-if __name__ == '__main__':
-    print("🌟 Starting Astrological Trading System...")
-    print("📊 Planetary data loaded:", len(planetary_data.planets), "planets")
-    print("🇮🇳 Indian symbols:", len(planetary_data.indian_symbols))
-    print("🌍 Global symbols:", len(planetary_data.global_symbols))
-    print("🚀 Server starting on http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+def display_settings():
+    """Display system settings"""
+    st.subheader("🎯 Symbol Management")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("**🇮🇳 Indian Market Symbols**")
+        for symbol in st.session_state.planetary_data.indian_symbols:
+            st.write(f"• {symbol}")
+        
+        new_indian_symbol = st.text_input("Add Indian Symbol", placeholder="e.g., RELIANCE")
+        if st.button("Add Indian Symbol"):
+            if new_indian_symbol and new_indian_symbol not in st.session_state.planetary_data.indian_symbols:
+                st.session_state.planetary_data.indian_symbols.append(new_indian_symbol.upper())
+                st.success(f"Added {new_indian_symbol}")
+                st.rerun()
+    
+    with col2:
+        st.write("**🌍 Global Market Symbols**")
+        for symbol in st.session_state.planetary_data.global_symbols:
+            st.write(f"• {symbol}")
+        
+        new_global_symbol = st.text_input("Add Global Symbol", placeholder="e.g., AAPL")
+        if st.button("Add Global Symbol"):
+            if new_global_symbol and new_global_symbol not in st.session_state.planetary_data.global_symbols:
+                st.session_state.planetary_data.global_symbols.append(new_global_symbol.upper())
+                st.success(f"Added {new_global_symbol}")
+                st.rerun()
+    
+    st.subheader("🪐 Planetary Data Management")
+    
+    if st.button("Reset to Default Data"):
+        st.session_state.planetary_data = PlanetaryData()
+        st.success("Reset to default planetary data")
+        st.rerun()
+    
+    st.subheader("💾 Data Export")
+    
+    if st.button("Export Planetary Data as JSON"):
+        data = {
+            'planets': st.session_state.planetary_data.planets,
+            'indian_symbols': st.session_state.planetary_data.indian_symbols,
+            'global_symbols': st.session_state.planetary_data.global_symbols,
+            'export_date': datetime.now().isoformat()
+        }
+        
+        st.download_button(
+            label="Download JSON",
+            data=json.dumps(data, indent=2),
+            file_name=f"astro_trading_data_{datetime.now().strftime('%Y%m%d')}.json",
+            mime="application/json"
+        )
+    
+    # Disclaimer
+    st.markdown("---")
+    st.warning("""
+    ⚠️ **Disclaimer**: This system is for educational purposes only. 
+    Astrological analysis is not scientifically proven for market prediction. 
+    Always consult qualified financial advisors before making trading decisions.
+    """)
+
+if __name__ == "__main__":
+    main()
