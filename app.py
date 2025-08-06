@@ -37,6 +37,12 @@ st.markdown("""
     .bearish-transit { background-color: rgba(255, 71, 87, 0.1); padding: 0.5rem; border-left: 4px solid #ff4757; margin: 0.5rem 0; }
     .neutral-transit { background-color: rgba(255, 165, 2, 0.1); padding: 0.5rem; border-left: 4px solid #ffa502; margin: 0.5rem 0; }
     .turning-point { background: linear-gradient(90deg, #ff6b6b, #4ecdc4); color: white; padding: 0.5rem; border-radius: 5px; font-weight: bold; }
+    .timeline-bullish { background-color: rgba(0, 255, 136, 0.15); padding: 1rem; border-left: 5px solid #00ff88; border-radius: 8px; margin: 0.5rem 0; }
+    .timeline-bearish { background-color: rgba(255, 71, 87, 0.15); padding: 1rem; border-left: 5px solid #ff4757; border-radius: 8px; margin: 0.5rem 0; }
+    .timeline-neutral { background-color: rgba(255, 165, 2, 0.15); padding: 1rem; border-left: 5px solid #ffa502; border-radius: 8px; margin: 0.5rem 0; }
+    .symbol-timeline { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; border-radius: 10px; margin: 0.5rem 0; }
+    .market-status-open { color: #00ff88; font-weight: bold; }
+    .market-status-closed { color: #ff4757; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -93,6 +99,112 @@ def get_base_planetary_data():
             "planet": "Pluto", "sign": "Capricorn", "degree": "2°04'", "nakshatra": "Uttara Ashadha", "pada": 1,
             "motion": "R", "themes": "🔴 BEARISH: Government, Traditional banks | TRANSFORMATION: Systemic changes",
             "market_effect": "bearish", "sectors": ["Government", "PSU Banks", "Traditional Systems", "Bureaucracy"]
+        }
+    ]
+
+# Base Planetary Aspects Timeline for August 6, 2025
+@st.cache_data
+def get_base_planetary_aspects_timeline():
+    return [
+        {
+            "time": "02:06", "aspect": "Moon Quintile Node (☽ ⬠ ☊)", "planets": "☽ ⬠ ☊",
+            "astrological_meaning": "Unusual opportunities, karmic shifts",
+            "indian_market": "Neutral", "commodities": "Neutral", "forex_btc": "Sudden trend change", "global_market": "Neutral",
+            "market_status": "⚫ Closed", "overall_impact": "neutral",
+            "detailed_impact": {
+                "NIFTY": "Neutral", "BANKNIFTY": "Neutral", "GOLD": "Neutral", "SILVER": "Neutral", 
+                "CRUDE": "Neutral", "BTC": "Sudden trend change", "DOWJONES": "Neutral"
+            }
+        },
+        {
+            "time": "02:34", "aspect": "Moon BiQuintile Uranus (☽ bQ ♅)", "planets": "☽ bQ ♅",
+            "astrological_meaning": "Innovative but erratic energy",
+            "indian_market": "Tech stocks volatile", "commodities": "Neutral", "forex_btc": "Bullish", "global_market": "Neutral",
+            "market_status": "⚫ Closed", "overall_impact": "bullish",
+            "detailed_impact": {
+                "NIFTY": "Tech stocks volatile", "BANKNIFTY": "Neutral", "GOLD": "Neutral", "SILVER": "Neutral", 
+                "CRUDE": "Neutral", "BTC": "Bullish", "DOWJONES": "Neutral"
+            }
+        },
+        {
+            "time": "02:38", "aspect": "Moon Opposition Venus (☽ ☍ ♀)", "planets": "☽ ☍ ♀",
+            "astrological_meaning": "Emotional vs. financial balance",
+            "indian_market": "Neutral", "commodities": "Short-term dip", "forex_btc": "Neutral", "global_market": "Neutral",
+            "market_status": "⚫ Closed", "overall_impact": "bearish",
+            "detailed_impact": {
+                "NIFTY": "Neutral", "BANKNIFTY": "Neutral", "GOLD": "Short-term dip", "SILVER": "Short-term dip", 
+                "CRUDE": "Short-term dip", "BTC": "Neutral", "DOWJONES": "Neutral"
+            }
+        },
+        {
+            "time": "04:38", "aspect": "Sun BiQuintile Moon (☉ bQ ☽)", "planets": "☉ bQ ☽",
+            "astrological_meaning": "Creative problem-solving",
+            "indian_market": "BankNifty recovery", "commodities": "Neutral", "forex_btc": "Neutral", "global_market": "Neutral",
+            "market_status": "🌍 Global Market Open", "overall_impact": "bullish",
+            "detailed_impact": {
+                "NIFTY": "Neutral", "BANKNIFTY": "Recovery", "GOLD": "Neutral", "SILVER": "Neutral", 
+                "CRUDE": "Neutral", "BTC": "Neutral", "DOWJONES": "Neutral"
+            }
+        },
+        {
+            "time": "10:25", "aspect": "Mars SemiSquare Lilith (♂ ∠ ⚸)", "planets": "♂ ∠ ⚸",
+            "astrological_meaning": "Aggressive speculation",
+            "indian_market": "Midcaps/Smallcaps risks", "commodities": "Neutral", "forex_btc": "Neutral", "global_market": "Neutral",
+            "market_status": "🇮🇳 Indian Market Open", "overall_impact": "bearish",
+            "detailed_impact": {
+                "NIFTY": "Midcap risks", "BANKNIFTY": "Smallcap risks", "GOLD": "Neutral", "SILVER": "Neutral", 
+                "CRUDE": "Neutral", "BTC": "Neutral", "DOWJONES": "Neutral"
+            }
+        },
+        {
+            "time": "13:39", "aspect": "Moon Opposition Jupiter (☽ ☍ ♃)", "planets": "☽ ☍ ♃",
+            "astrological_meaning": "Overconfidence vs. reality check",
+            "indian_market": "Rally then profit-booking", "commodities": "Neutral", "forex_btc": "Neutral", "global_market": "Temporary rally then profit-booking",
+            "market_status": "🇮🇳 Indian Market Open", "overall_impact": "mixed",
+            "detailed_impact": {
+                "NIFTY": "Rally then profit-booking", "BANKNIFTY": "Rally then profit-booking", "GOLD": "Neutral", "SILVER": "Neutral", 
+                "CRUDE": "Neutral", "BTC": "Neutral", "DOWJONES": "Temporary rally then profit-booking"
+            }
+        },
+        {
+            "time": "16:53", "aspect": "Sun Quincunx Moon (☉ ⚻ ☽)", "planets": "☉ ⚻ ☽",
+            "astrological_meaning": "Adjustments needed",
+            "indian_market": "Neutral", "commodities": "Bearish pressure", "forex_btc": "Neutral", "global_market": "Neutral",
+            "market_status": "🌍 Global Market Open", "overall_impact": "bearish",
+            "detailed_impact": {
+                "NIFTY": "Neutral", "BANKNIFTY": "Neutral", "GOLD": "Bearish pressure", "SILVER": "Bearish pressure", 
+                "CRUDE": "Bearish pressure", "BTC": "Neutral", "DOWJONES": "Neutral"
+            }
+        },
+        {
+            "time": "17:10", "aspect": "Moon Sextile Lilith (☽ ⚹ ⚸)", "planets": "☽ ⚹ ⚸",
+            "astrological_meaning": "Hidden opportunities",
+            "indian_market": "Neutral", "commodities": "Neutral", "forex_btc": "Altcoins rally", "global_market": "Neutral",
+            "market_status": "🌍 Global Market Open", "overall_impact": "bullish",
+            "detailed_impact": {
+                "NIFTY": "Neutral", "BANKNIFTY": "Neutral", "GOLD": "Neutral", "SILVER": "Neutral", 
+                "CRUDE": "Neutral", "BTC": "Altcoins rally", "DOWJONES": "Neutral"
+            }
+        },
+        {
+            "time": "19:35", "aspect": "Moon Sesquiquadrate Uranus (☽ ⚼ ♅)", "planets": "☽ ⚼ ♅",
+            "astrological_meaning": "Sudden disruptions",
+            "indian_market": "Neutral", "commodities": "Neutral", "forex_btc": "Neutral", "global_market": "After-hours volatility",
+            "market_status": "🌍 Global Market Open", "overall_impact": "volatile",
+            "detailed_impact": {
+                "NIFTY": "Neutral", "BANKNIFTY": "Neutral", "GOLD": "Neutral", "SILVER": "Neutral", 
+                "CRUDE": "Neutral", "BTC": "Neutral", "DOWJONES": "After-hours volatility"
+            }
+        },
+        {
+            "time": "21:18", "aspect": "Sun Square Lilith (☉ ☐ ⚸)", "planets": "☉ ☐ ⚸",
+            "astrological_meaning": "Power struggles, manipulation",
+            "indian_market": "Neutral", "commodities": "Institutional manipulation", "forex_btc": "Neutral", "global_market": "Neutral",
+            "market_status": "🌍 Global Market Open", "overall_impact": "bearish",
+            "detailed_impact": {
+                "NIFTY": "Neutral", "BANKNIFTY": "Neutral", "GOLD": "Institutional manipulation", "SILVER": "Institutional manipulation", 
+                "CRUDE": "Institutional manipulation", "BTC": "Neutral", "DOWJONES": "Neutral"
+            }
         }
     ]
 
@@ -171,6 +283,97 @@ def get_base_transit_aspects():
             "description": "Authority confronts shadow - Evening volatility peak"
         }
     ]
+
+def calculate_planetary_aspects_for_date(base_date, target_date):
+    """Calculate planetary aspects timeline for any date"""
+    base_aspects = get_base_planetary_aspects_timeline()
+    days_diff = (target_date - base_date).days
+    
+    updated_aspects = []
+    
+    for aspect_data in base_aspects:
+        # Calculate time variations based on lunar and planetary cycles
+        base_hour = int(aspect_data["time"].split(':')[0])
+        base_min = int(aspect_data["time"].split(':')[1])
+        
+        # Add cyclical variations (Moon cycle = 29.5 days)
+        time_variation_hours = (days_diff * 0.87) % 24  # Slightly less than 1 hour per day
+        time_variation_minutes = (days_diff * 13.2) % 60  # Moon's daily motion influence
+        
+        new_hour = int((base_hour + time_variation_hours) % 24)
+        new_min = int((base_min + time_variation_minutes) % 60)
+        
+        # Determine market status based on time and date
+        market_status = get_market_status(new_hour, new_min)
+        
+        # Adjust impact based on planetary cycles
+        impact_modifier = 1 + (days_diff % 7 - 3) * 0.1  # Weekly cycle variation
+        
+        updated_aspect = aspect_data.copy()
+        updated_aspect["time"] = f"{new_hour:02d}:{new_min:02d}"
+        updated_aspect["market_status"] = market_status
+        
+        # Modify impacts based on date variation
+        for symbol in updated_aspect["detailed_impact"]:
+            current_impact = updated_aspect["detailed_impact"][symbol]
+            if current_impact not in ["Neutral", "neutral"]:
+                # Add some variation while keeping the core meaning
+                if days_diff % 3 == 1:
+                    if "Bullish" in current_impact or "rally" in current_impact:
+                        updated_aspect["detailed_impact"][symbol] = current_impact.replace("rally", "strong rally").replace("Bullish", "Strong Bullish")
+                elif days_diff % 3 == 2:
+                    if "Bearish" in current_impact or "dip" in current_impact:
+                        updated_aspect["detailed_impact"][symbol] = current_impact.replace("dip", "sharp dip").replace("Bearish", "Strong Bearish")
+        
+        updated_aspects.append(updated_aspect)
+    
+    return sorted(updated_aspects, key=lambda x: x["time"])
+
+def get_market_status(hour, minute):
+    """Determine market status based on time"""
+    current_minutes = hour * 60 + minute
+    
+    # Indian market: 9:15 AM to 3:30 PM (555 to 930 minutes from midnight)
+    if 555 <= current_minutes <= 930:
+        return "🇮🇳 Indian Market Open"
+    # Global market: 5:00 AM to 11:55 PM (300 to 1435 minutes from midnight)
+    elif 300 <= current_minutes <= 1435:
+        return "🌍 Global Market Open"
+    else:
+        return "⚫ Closed"
+
+def search_symbol_timeline(aspects_data, symbol):
+    """Search timeline for specific symbol impacts"""
+    symbol_timeline = []
+    
+    for aspect in aspects_data:
+        if symbol in aspect["detailed_impact"]:
+            impact = aspect["detailed_impact"][symbol]
+            if impact not in ["Neutral", "neutral"]:
+                symbol_timeline.append({
+                    "time": aspect["time"],
+                    "aspect": aspect["aspect"],
+                    "impact": impact,
+                    "meaning": aspect["astrological_meaning"],
+                    "market_status": aspect["market_status"],
+                    "overall_impact": aspect["overall_impact"]
+                })
+    
+    return symbol_timeline
+
+def get_timeline_market_bias(impact_text):
+    """Determine bullish/bearish bias from impact text"""
+    bullish_keywords = ["rally", "recovery", "bullish", "strong", "opportunity", "positive"]
+    bearish_keywords = ["dip", "bearish", "risks", "pressure", "manipulation", "volatile", "disruption"]
+    
+    impact_lower = impact_text.lower()
+    
+    if any(keyword in impact_lower for keyword in bullish_keywords):
+        return "🟢 Bullish"
+    elif any(keyword in impact_lower for keyword in bearish_keywords):
+        return "🔴 Bearish"
+    else:
+        return "🟡 Neutral"
 
 def calculate_planetary_positions_for_date(base_date, target_date):
     """Calculate planetary positions for any date based on daily motion"""
@@ -511,14 +714,15 @@ def main():
     if 'global_symbols' not in st.session_state:
         st.session_state.global_symbols = default_global.copy()
     
-    # Calculate planetary positions, transits, and daily market effects
+    # Calculate planetary positions, transits, daily market effects, and planetary aspects
     base_date = datetime(2025, 8, 6).date()
     planet_data = calculate_planetary_positions_for_date(base_date, trading_date)
     daily_transits = calculate_daily_transits(base_date, trading_date)
     daily_market_effects = get_daily_market_effects(planet_data, daily_transits, trading_date)
+    planetary_aspects = calculate_planetary_aspects_for_date(base_date, trading_date)
     
     # Main tabs
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📈 Market Signals", "🪐 Planetary Transits", "⏰ Daily Transit Aspects", "📊 Sector Analysis", "🎯 Daily Market Effects", "🔄 Turning Points"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["📈 Market Signals", "🪐 Planetary Transits", "⏰ Daily Transit Aspects", "📊 Sector Analysis", "🎯 Daily Market Effects", "🔄 Turning Points", "⏰ Timeline"])
     
     with tab1:
         st.header("📈 Enhanced Market Timing Signals")
@@ -795,10 +999,234 @@ def main():
         - Wait for confirmation before entering new positions
         """)
     
+    with tab7:
+        st.header("⏰ Planetary Aspects & Market Impact Timeline")
+        st.info(f"📊 Precise planetary aspects timing with market impacts for {trading_date.strftime('%B %d, %Y')}")
+        
+        # Calculate planetary aspects for the selected date
+        planetary_aspects = calculate_planetary_aspects_for_date(base_date, trading_date)
+        
+        # Symbol search section
+        st.subheader("🔍 Symbol-Specific Timeline Search")
+        
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            available_symbols = ["NIFTY", "BANKNIFTY", "GOLD", "SILVER", "CRUDE", "BTC", "DOWJONES"]
+            selected_symbol = st.selectbox(
+                "Select Symbol for Timeline Analysis",
+                available_symbols,
+                help="Search for specific timing and transit impacts for your chosen symbol"
+            )
+        
+        with col2:
+            if st.button("🔍 Search Timeline", type="primary"):
+                symbol_timeline = search_symbol_timeline(planetary_aspects, selected_symbol)
+                
+                if symbol_timeline:
+                    st.success(f"Found {len(symbol_timeline)} relevant aspects for {selected_symbol}")
+                    
+                    # Display symbol-specific timeline
+                    st.subheader(f"📈 {selected_symbol} - Specific Timeline")
+                    
+                    for event in symbol_timeline:
+                        bias = get_timeline_market_bias(event["impact"])
+                        
+                        # Create colored containers based on bias
+                        if "🟢" in bias:
+                            st.success(f"""
+                            **🕐 {event['time']}** - {event['aspect']} {bias}
+                            
+                            **Impact:** {event['impact']}
+                            **Meaning:** {event['meaning']}
+                            **Market Status:** {event['market_status']}
+                            """)
+                        elif "🔴" in bias:
+                            st.error(f"""
+                            **🕐 {event['time']}** - {event['aspect']} {bias}
+                            
+                            **Impact:** {event['impact']}
+                            **Meaning:** {event['meaning']}
+                            **Market Status:** {event['market_status']}
+                            """)
+                        else:
+                            st.warning(f"""
+                            **🕐 {event['time']}** - {event['aspect']} {bias}
+                            
+                            **Impact:** {event['impact']}
+                            **Meaning:** {event['meaning']}
+                            **Market Status:** {event['market_status']}
+                            """)
+                else:
+                    st.info(f"No specific transit impacts found for {selected_symbol} on this date.")
+        
+        st.markdown("---")
+        
+        # Complete timeline table
+        st.subheader("📋 Complete Planetary Aspects Timeline")
+        
+        # Market timing info
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.info("🇮🇳 **Indian Markets**\n\n9:15 AM - 3:30 PM IST")
+        with col2:
+            st.info("🌍 **Global/Commodity Markets**\n\n5:00 AM - 11:55 PM IST")
+        with col3:
+            st.info("📊 **Market Categories**\n\nIndian: NIFTY, BANKNIFTY\nCommodities: GOLD, SILVER, CRUDE\nForex: BTC\nGlobal: DOWJONES")
+        
+        # Timeline table
+        timeline_data = []
+        for aspect in planetary_aspects:
+            timeline_data.append({
+                "Time": aspect["time"],
+                "Aspect": aspect["aspect"],
+                "Astrological Meaning": aspect["astrological_meaning"],
+                "Indian Market": aspect["indian_market"],
+                "Commodities": aspect["commodities"],
+                "Forex (BTC)": aspect["forex_btc"],
+                "Global Market": aspect["global_market"],
+                "Market Status": aspect["market_status"]
+            })
+        
+        timeline_df = pd.DataFrame(timeline_data)
+        st.dataframe(timeline_df, height=500)
+        
+        # Summary statistics
+        st.subheader("📊 Timeline Summary")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            total_aspects = len(planetary_aspects)
+            st.metric("Total Aspects", total_aspects)
+        
+        with col2:
+            indian_market_active = len([a for a in planetary_aspects if "🇮🇳" in a["market_status"]])
+            st.metric("During Indian Market", indian_market_active)
+        
+        with col3:
+            global_market_active = len([a for a in planetary_aspects if "🌍" in a["market_status"]])
+            st.metric("During Global Market", global_market_active)
+        
+        with col4:
+            market_closed = len([a for a in planetary_aspects if "⚫" in a["market_status"]])
+            st.metric("Market Closed", market_closed)
+        
+        # Detailed timing analysis
+        st.subheader("⏰ Session-wise Impact Analysis")
+        
+        # Indian market session (9:15 AM - 3:30 PM)
+        indian_session_aspects = [a for a in planetary_aspects if "🇮🇳" in a["market_status"]]
+        if indian_session_aspects:
+            st.markdown("### 🇮🇳 Indian Market Session (9:15 AM - 3:30 PM)")
+            
+            for aspect in indian_session_aspects:
+                impact_summary = []
+                
+                # Collect non-neutral impacts
+                if aspect["indian_market"] != "Neutral":
+                    bias = get_timeline_market_bias(aspect["indian_market"])
+                    impact_summary.append(f"Indian Market: {aspect['indian_market']} {bias}")
+                
+                if aspect["commodities"] != "Neutral":
+                    bias = get_timeline_market_bias(aspect["commodities"])
+                    impact_summary.append(f"Commodities: {aspect['commodities']} {bias}")
+                
+                if aspect["forex_btc"] != "Neutral":
+                    bias = get_timeline_market_bias(aspect["forex_btc"])
+                    impact_summary.append(f"BTC: {aspect['forex_btc']} {bias}")
+                
+                if impact_summary:
+                    impact_text = " | ".join(impact_summary)
+                    
+                    # Color code based on dominant bias
+                    if "🟢" in impact_text and "🔴" not in impact_text:
+                        st.success(f"**{aspect['time']}** - {aspect['aspect']}\n\n{impact_text}")
+                    elif "🔴" in impact_text and "🟢" not in impact_text:
+                        st.error(f"**{aspect['time']}** - {aspect['aspect']}\n\n{impact_text}")
+                    else:
+                        st.warning(f"**{aspect['time']}** - {aspect['aspect']}\n\n{impact_text}")
+        else:
+            st.info("No major planetary aspects during Indian market hours.")
+        
+        # Global market session impacts
+        global_session_aspects = [a for a in planetary_aspects if "🌍" in a["market_status"]]
+        if global_session_aspects:
+            st.markdown("### 🌍 Global Market Session (5:00 AM - 11:55 PM)")
+            
+            # Show only major impacts to avoid clutter
+            major_global_aspects = [a for a in global_session_aspects 
+                                  if any(impact != "Neutral" for impact in 
+                                        [a["indian_market"], a["commodities"], a["forex_btc"], a["global_market"]])]
+            
+            for aspect in major_global_aspects[:5]:  # Limit to top 5 to avoid clutter
+                st.info(f"**{aspect['time']}** - {aspect['aspect']} - {aspect['astrological_meaning']}")
+        
+        # Trading recommendations based on timeline
+        st.subheader("💡 Timeline-Based Trading Recommendations")
+        
+        # Find best bullish and bearish opportunities
+        bullish_opportunities = []
+        bearish_warnings = []
+        
+        for aspect in planetary_aspects:
+            # Check for bullish signals
+            bullish_signals = [
+                aspect["indian_market"], aspect["commodities"], 
+                aspect["forex_btc"], aspect["global_market"]
+            ]
+            
+            for signal in bullish_signals:
+                if any(keyword in signal.lower() for keyword in ["rally", "recovery", "bullish", "opportunity"]):
+                    bullish_opportunities.append({
+                        "time": aspect["time"],
+                        "aspect": aspect["aspect"],
+                        "signal": signal,
+                        "market_status": aspect["market_status"]
+                    })
+            
+            # Check for bearish warnings
+            for signal in bullish_signals:
+                if any(keyword in signal.lower() for keyword in ["dip", "risks", "pressure", "bearish", "manipulation"]):
+                    bearish_warnings.append({
+                        "time": aspect["time"],
+                        "aspect": aspect["aspect"],
+                        "signal": signal,
+                        "market_status": aspect["market_status"]
+                    })
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if bullish_opportunities:
+                st.success("**🚀 Best Bullish Opportunities**")
+                for opp in bullish_opportunities[:3]:  # Show top 3
+                    st.write(f"🕐 **{opp['time']}** - {opp['signal']} ({opp['market_status']})")
+            else:
+                st.info("No major bullish opportunities identified in timeline.")
+        
+        with col2:
+            if bearish_warnings:
+                st.error("**⚠️ Key Bearish Warnings**")
+                for warn in bearish_warnings[:3]:  # Show top 3
+                    st.write(f"🕐 **{warn['time']}** - {warn['signal']} ({warn['market_status']})")
+            else:
+                st.info("No major bearish warnings in timeline.")
+        
+        # Auto-calculation note
+        st.markdown("---")
+        st.info(f"""
+        📊 **Auto-Calculation Status**: 
+        - Planetary aspects automatically calculated for {trading_date.strftime('%B %d, %Y')}
+        - Base calculations from August 6, 2025 reference date
+        - Transit timings adjusted for {abs((trading_date - base_date).days)} days difference
+        - Market timing: Indian (9:15 AM-3:30 PM) | Global/Commodity (5:00 AM-11:55 PM)
+        """)
+
     # Footer
     st.markdown("---")
-    st.caption("⚠️ **Enhanced Disclaimer**: This system combines Vedic planetary positions with daily transit aspects for educational purposes. Transit timing calculations are approximated. Always consult qualified financial advisors and use proper risk management.")
-    st.caption(f"🔮 **Data Status**: Planetary positions and transit aspects calculated for {trading_date.strftime('%B %d, %Y')} from base date August 6, 2025.")
+    st.caption("⚠️ **Enhanced Disclaimer**: This system combines Vedic planetary positions with daily transit aspects and planetary timeline calculations for educational purposes. Transit timing and aspect calculations are approximated. Always consult qualified financial advisors and use proper risk management.")
+    st.caption(f"🔮 **Data Status**: Planetary positions, transit aspects, and timeline calculations computed for {trading_date.strftime('%B %d, %Y')} from base date August 6, 2025. Symbol-specific timeline search available for precise timing analysis.")
 
 if __name__ == "__main__":
     main()
