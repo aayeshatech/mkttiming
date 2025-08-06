@@ -46,43 +46,53 @@ def get_base_planetary_data():
     return [
         {
             "planet": "Sun", "sign": "Cancer", "degree": "20°15'", "nakshatra": "Aslesha", "pada": 4,
-            "motion": "D", "themes": "Soul power, mysticism, healing"
+            "motion": "D", "themes": "🔥 BEARISH: Healthcare, Pharma, Real Estate | NEUTRAL: Government, PSUs, Banking",
+            "market_effect": "bearish", "sectors": ["Healthcare", "Pharma", "Real Estate", "FMCG"]
         },
         {
             "planet": "Moon", "sign": "Sagittarius", "degree": "11°41'", "nakshatra": "Mula", "pada": 1,
-            "motion": "D", "themes": "Root work, transformation, Ketu energy"
+            "motion": "D", "themes": "🟡 NEUTRAL: International Trade, Travel, Education | TRANSFORMATION: Tech disruption",
+            "market_effect": "neutral", "sectors": ["International Trade", "Travel", "Education", "Philosophy"]
         },
         {
             "planet": "Mercury", "sign": "Cancer", "degree": "10°48'", "nakshatra": "Pushya", "pada": 3,
-            "motion": "R", "themes": "Retrograde: Reevaluate emotions, communication blocks"
+            "motion": "R", "themes": "🔴 VERY BEARISH: IT, Telecom, Media | AVOID: NIFTY IT, Communication stocks",
+            "market_effect": "very_bearish", "sectors": ["IT", "Telecom", "Media", "Communication", "E-commerce"]
         },
         {
             "planet": "Venus", "sign": "Gemini", "degree": "1°10'", "nakshatra": "Mrigashira", "pada": 1,
-            "motion": "D", "themes": "New relationships, curiosity, flexibility"
+            "motion": "D", "themes": "🟢 BULLISH: Luxury, FMCG, Retail, Entertainment | GOOD: Consumer stocks",
+            "market_effect": "bullish", "sectors": ["Luxury", "FMCG", "Retail", "Entertainment", "Beauty", "Textiles"]
         },
         {
             "planet": "Mars", "sign": "Taurus", "degree": "17°22'", "nakshatra": "Rohini", "pada": 2,
-            "motion": "D", "themes": "Exalted: Steady power, creativity, material success"
+            "motion": "D", "themes": "🚀 VERY BULLISH: Banking, Realty, Steel, Auto | STRONG: NIFTY, BANKNIFTY, Infrastructure",
+            "market_effect": "very_bullish", "sectors": ["Banking", "Realty", "Steel", "Auto", "Infrastructure", "Construction"]
         },
         {
             "planet": "Jupiter", "sign": "Gemini", "degree": "14°53'", "nakshatra": "Ardra", "pada": 4,
-            "motion": "D", "themes": "Intellectual growth, stormy insights"
+            "motion": "D", "themes": "🟢 BULLISH: Education, Publishing, Airlines | MODERATE: Financial services, NBFCs",
+            "market_effect": "bullish", "sectors": ["Education", "Publishing", "Airlines", "Financial Services", "NBFCs"]
         },
         {
             "planet": "Saturn", "sign": "Aquarius", "degree": "1°35'", "nakshatra": "Dhanishta", "pada": 1,
-            "motion": "D", "themes": "Discipline in innovation, social duty"
+            "motion": "D", "themes": "🟡 NEUTRAL: Tech innovation, Utilities | DISCIPLINED: Long-term investments",
+            "market_effect": "neutral", "sectors": ["Technology", "Utilities", "Renewable Energy", "Innovation"]
         },
         {
             "planet": "Uranus", "sign": "Aries", "degree": "26°58'", "nakshatra": "Bharani", "pada": 3,
-            "motion": "D", "themes": "Radical change, rebirth energy"
+            "motion": "D", "themes": "🔥 VOLATILE: Defense, Chemicals, Metals | DISRUPTION: Traditional industries",
+            "market_effect": "volatile", "sectors": ["Defense", "Chemicals", "Metals", "Mining", "Explosives"]
         },
         {
             "planet": "Neptune", "sign": "Pisces", "degree": "29°49'", "nakshatra": "Revati", "pada": 4,
-            "motion": "D", "themes": "Spiritual culmination, compassion"
+            "motion": "D", "themes": "🟡 NEUTRAL: Pharma, Chemicals, Oil | SPIRITUAL: Alternative medicine",
+            "market_effect": "neutral", "sectors": ["Pharmaceuticals", "Chemicals", "Oil", "Shipping", "Fisheries"]
         },
         {
             "planet": "Pluto", "sign": "Capricorn", "degree": "2°04'", "nakshatra": "Uttara Ashadha", "pada": 1,
-            "motion": "R", "themes": "Systemic destruction, karmic release"
+            "motion": "R", "themes": "🔴 BEARISH: Government, Traditional banks | TRANSFORMATION: Systemic changes",
+            "market_effect": "bearish", "sectors": ["Government", "PSU Banks", "Traditional Systems", "Bureaucracy"]
         }
     ]
 
@@ -266,6 +276,109 @@ def get_turning_points(transits):
     
     return sorted(turning_points, key=lambda x: x["time"])
 
+def get_daily_market_effects(planet_data, transits, target_date):
+    """Generate specific timing effects for major markets"""
+    
+    # Asset-specific planetary rulerships and sensitivities
+    asset_rules = {
+        "NIFTY": {
+            "primary": ["Mars", "Jupiter"], "secondary": ["Sun", "Mercury"], 
+            "bearish": ["Saturn", "Rahu"], "sectors": ["Banking", "IT", "Auto"]
+        },
+        "BANKNIFTY": {
+            "primary": ["Mars", "Jupiter"], "secondary": ["Venus", "Mercury"],
+            "bearish": ["Saturn"], "sectors": ["Banking", "Financial Services"]
+        },
+        "GOLD": {
+            "primary": ["Sun", "Jupiter"], "secondary": ["Venus"],
+            "bearish": ["Mars", "Saturn"], "sectors": ["Precious Metals", "Traditional Assets"]
+        },
+        "BTC": {
+            "primary": ["Uranus", "Mercury"], "secondary": ["Saturn"],
+            "bearish": ["Mercury Retrograde"], "sectors": ["Cryptocurrency", "Technology"]
+        },
+        "CRUDE": {
+            "primary": ["Mars", "Sun"], "secondary": ["Jupiter"],
+            "bearish": ["Venus", "Moon"], "sectors": ["Energy", "Chemicals"]
+        }
+    }
+    
+    market_effects = {}
+    
+    for asset, rules in asset_rules.items():
+        daily_timeline = []
+        
+        # Morning session (9:15 - 11:30)
+        morning_strength = 0
+        for planet_info in planet_data:
+            planet = planet_info["planet"]
+            if planet in rules["primary"]:
+                if planet_info["market_effect"] == "very_bullish":
+                    morning_strength += 3
+                elif planet_info["market_effect"] == "bullish":
+                    morning_strength += 2
+                elif planet_info["market_effect"] == "bearish":
+                    morning_strength -= 2
+                elif planet_info["market_effect"] == "very_bearish":
+                    morning_strength -= 3
+            elif planet in rules["secondary"]:
+                if planet_info["market_effect"] == "very_bullish":
+                    morning_strength += 1.5
+                elif planet_info["market_effect"] == "bullish":
+                    morning_strength += 1
+                elif planet_info["market_effect"] == "bearish":
+                    morning_strength -= 1
+                elif planet_info["market_effect"] == "very_bearish":
+                    morning_strength -= 1.5
+        
+        # Add transit influences for morning
+        for transit in transits:
+            transit_hour = int(transit["time"].split(':')[0])
+            if 9 <= transit_hour <= 11:
+                if any(sector in rules["sectors"] for sector in transit["sectors"]):
+                    if transit["market_impact"] == "bullish":
+                        morning_strength += transit["strength"] * 0.5
+                    elif transit["market_impact"] == "bearish":
+                        morning_strength -= transit["strength"] * 0.5
+        
+        morning_bias = "STRONG BULLISH" if morning_strength >= 3 else "BULLISH" if morning_strength >= 1 else "STRONG BEARISH" if morning_strength <= -3 else "BEARISH" if morning_strength <= -1 else "NEUTRAL"
+        daily_timeline.append({"time": "09:15-11:30", "session": "Morning", "bias": morning_bias, "strength": morning_strength})
+        
+        # Afternoon session (11:30 - 15:30)
+        afternoon_strength = morning_strength * 0.7  # Carry forward with dampening
+        
+        for transit in transits:
+            transit_hour = int(transit["time"].split(':')[0])
+            if 11 <= transit_hour <= 15:
+                if any(sector in rules["sectors"] for sector in transit["sectors"]):
+                    if transit["market_impact"] == "bullish":
+                        afternoon_strength += transit["strength"] * 0.8
+                    elif transit["market_impact"] == "bearish":
+                        afternoon_strength -= transit["strength"] * 0.8
+        
+        afternoon_bias = "STRONG BULLISH" if afternoon_strength >= 3 else "BULLISH" if afternoon_strength >= 1 else "STRONG BEARISH" if afternoon_strength <= -3 else "BEARISH" if afternoon_strength <= -1 else "NEUTRAL"
+        daily_timeline.append({"time": "11:30-15:30", "session": "Afternoon", "bias": afternoon_bias, "strength": afternoon_strength})
+        
+        # Evening/Global session (for 24h markets)
+        if asset in ["GOLD", "BTC", "CRUDE"]:
+            evening_strength = afternoon_strength * 0.5
+            
+            for transit in transits:
+                transit_hour = int(transit["time"].split(':')[0])
+                if 16 <= transit_hour <= 23:
+                    if any(sector in rules["sectors"] for sector in transit["sectors"]):
+                        if transit["market_impact"] == "bullish":
+                            evening_strength += transit["strength"] * 0.6
+                        elif transit["market_impact"] == "bearish":
+                            evening_strength -= transit["strength"] * 0.6
+            
+            evening_bias = "STRONG BULLISH" if evening_strength >= 3 else "BULLISH" if evening_strength >= 1 else "STRONG BEARISH" if evening_strength <= -3 else "BEARISH" if evening_strength <= -1 else "NEUTRAL"
+            daily_timeline.append({"time": "16:00-23:00", "session": "Evening", "bias": evening_bias, "strength": evening_strength})
+        
+        market_effects[asset] = daily_timeline
+    
+    return market_effects
+
 def advanced_signal_generation(planet_data, transits, symbol, time_slot, date):
     """Enhanced signal generation including transit aspects"""
     signal_strength = 0
@@ -398,13 +511,14 @@ def main():
     if 'global_symbols' not in st.session_state:
         st.session_state.global_symbols = default_global.copy()
     
-    # Calculate planetary positions and transits
+    # Calculate planetary positions, transits, and daily market effects
     base_date = datetime(2025, 8, 6).date()
     planet_data = calculate_planetary_positions_for_date(base_date, trading_date)
     daily_transits = calculate_daily_transits(base_date, trading_date)
+    daily_market_effects = get_daily_market_effects(planet_data, daily_transits, trading_date)
     
     # Main tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📈 Market Signals", "🪐 Planetary Transits", "⏰ Daily Transit Aspects", "📊 Sector Analysis", "🔄 Turning Points"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📈 Market Signals", "🪐 Planetary Transits", "⏰ Daily Transit Aspects", "📊 Sector Analysis", "🎯 Daily Market Effects", "🔄 Turning Points"])
     
     with tab1:
         st.header("📈 Enhanced Market Timing Signals")
@@ -451,14 +565,34 @@ def main():
         
         planet_df = pd.DataFrame(planet_data)
         planet_df['Market Influence'] = planet_df.apply(lambda row: 
-            "🟢 Very Bullish" if (row['planet'] == 'Mars' and row['sign'] == 'Taurus') else
-            "🔴 Very Bearish" if (row['planet'] == 'Mercury' and row['motion'] == 'R') else
-            "🟢 Bullish" if row['motion'] == 'D' and row['planet'] in ['Jupiter', 'Venus'] else
-            "🔴 Bearish" if row['motion'] == 'R' else
+            "🚀 Very Bullish" if row['market_effect'] == 'very_bullish' else
+            "🟢 Bullish" if row['market_effect'] == 'bullish' else
+            "🔴 Very Bearish" if row['market_effect'] == 'very_bearish' else
+            "🔴 Bearish" if row['market_effect'] == 'bearish' else
+            "⚡ Volatile" if row['market_effect'] == 'volatile' else
             "🟡 Neutral", axis=1
         )
         
         st.dataframe(planet_df[['planet', 'sign', 'degree', 'nakshatra', 'pada', 'motion', 'Market Influence', 'themes']], height=400)
+        
+        # Today's Major Planetary Effects Summary
+        st.subheader("🎯 Today's Major Market Effects by Planet")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 🚀 Strongest Bullish Influences")
+            bullish_planets = [p for p in planet_data if p['market_effect'] in ['very_bullish', 'bullish']]
+            for planet in sorted(bullish_planets, key=lambda x: 2 if x['market_effect'] == 'very_bullish' else 1, reverse=True):
+                strength_emoji = "🚀" if planet['market_effect'] == 'very_bullish' else "🟢"
+                st.success(f"{strength_emoji} **{planet['planet']} in {planet['sign']}** - {planet['themes'].split('|')[0].strip()}")
+        
+        with col2:
+            st.markdown("### 🔴 Strongest Bearish Influences")
+            bearish_planets = [p for p in planet_data if p['market_effect'] in ['very_bearish', 'bearish']]
+            for planet in sorted(bearish_planets, key=lambda x: 2 if x['market_effect'] == 'very_bearish' else 1, reverse=True):
+                strength_emoji = "🔴" if planet['market_effect'] == 'very_bearish' else "🟡"
+                st.error(f"{strength_emoji} **{planet['planet']} in {planet['sign']}** - {planet['themes'].split('|')[0].strip()}")
     
     with tab3:
         st.header(f"⏰ Daily Transit Aspects - {trading_date.strftime('%B %d, %Y')}")
@@ -542,6 +676,88 @@ def main():
             st.dataframe(sector_df, height=300)
     
     with tab5:
+        st.header("🎯 Daily Market Effects - Major Assets")
+        st.info(f"📊 Precise bullish/bearish timing for NIFTY, BANKNIFTY, GOLD, BTC, CRUDE on {trading_date.strftime('%B %d, %Y')}")
+        
+        # Display market effects for each major asset
+        for asset, timeline in daily_market_effects.items():
+            st.subheader(f"📈 {asset} - Session-wise Analysis")
+            
+            cols = st.columns(len(timeline))
+            
+            for i, session_data in enumerate(timeline):
+                with cols[i]:
+                    # Color coding based on bias
+                    if "STRONG BULLISH" in session_data["bias"]:
+                        st.success(f"🚀 **{session_data['session']}**\n\n**{session_data['time']}**\n\n**{session_data['bias']}**\n\nStrength: {session_data['strength']:.1f}")
+                    elif "BULLISH" in session_data["bias"]:
+                        st.success(f"🟢 **{session_data['session']}**\n\n**{session_data['time']}**\n\n**{session_data['bias']}**\n\nStrength: {session_data['strength']:.1f}")
+                    elif "STRONG BEARISH" in session_data["bias"]:
+                        st.error(f"🔴 **{session_data['session']}**\n\n**{session_data['time']}**\n\n**{session_data['bias']}**\n\nStrength: {session_data['strength']:.1f}")
+                    elif "BEARISH" in session_data["bias"]:
+                        st.warning(f"🟡 **{session_data['session']}**\n\n**{session_data['time']}**\n\n**{session_data['bias']}**\n\nStrength: {session_data['strength']:.1f}")
+                    else:
+                        st.info(f"⚖️ **{session_data['session']}**\n\n**{session_data['time']}**\n\n**{session_data['bias']}**\n\nStrength: {session_data['strength']:.1f}")
+            
+            st.markdown("---")
+        
+        # Overall market summary
+        st.subheader("📋 Overall Market Bias Summary")
+        
+        summary_data = []
+        for asset, timeline in daily_market_effects.items():
+            overall_strength = sum([session["strength"] for session in timeline]) / len(timeline)
+            dominant_bias = max(timeline, key=lambda x: abs(x["strength"]))["bias"]
+            
+            summary_data.append({
+                "Asset": asset,
+                "Overall Bias": dominant_bias,
+                "Avg Strength": f"{overall_strength:.1f}",
+                "Best Session": max(timeline, key=lambda x: x["strength"])["session"],
+                "Best Time": max(timeline, key=lambda x: x["strength"])["time"]
+            })
+        
+        summary_df = pd.DataFrame(summary_data)
+        st.dataframe(summary_df, height=200)
+        
+        # Trading recommendations
+        st.subheader("💡 Trading Recommendations")
+        
+        strongest_bullish = max(daily_market_effects.items(), 
+                               key=lambda x: max([session["strength"] for session in x[1] if "BULLISH" in session["bias"]], default=0))
+        
+        strongest_bearish = max(daily_market_effects.items(), 
+                               key=lambda x: min([session["strength"] for session in x[1] if "BEARISH" in session["bias"]], default=0))
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if strongest_bullish[0]:
+                best_session = max(strongest_bullish[1], key=lambda x: x["strength"])
+                st.success(f"""
+                **🚀 STRONGEST BULLISH OPPORTUNITY**
+                
+                **Asset:** {strongest_bullish[0]}
+                **Time:** {best_session['time']}
+                **Session:** {best_session['session']}
+                **Bias:** {best_session['bias']}
+                **Strength:** {best_session['strength']:.1f}
+                """)
+        
+        with col2:
+            if strongest_bearish[0]:
+                worst_session = min(strongest_bearish[1], key=lambda x: x["strength"])
+                st.error(f"""
+                **🔴 STRONGEST BEARISH PRESSURE**
+                
+                **Asset:** {strongest_bearish[0]}
+                **Time:** {worst_session['time']}
+                **Session:** {worst_session['session']}
+                **Bias:** {worst_session['bias']}
+                **Strength:** {worst_session['strength']:.1f}
+                """)
+    
+    with tab6:
         st.header("🔄 Market Turning Points")
         st.info("🎯 Major planetary aspects that typically mark significant market reversals")
         
